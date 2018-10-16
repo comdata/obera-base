@@ -23,25 +23,13 @@ pipeline {
 
 		stage('Build') { 
 			steps {
-				sh 'mvn -T 1C -B clean install'
+				withMaven() {
+					sh 'mvn -T 1C -B clean deploy'
+				}
             }
 
 		}
 	
-	    stage('Deploy') {
-	       parallel {
-	      		 stage('JUnit') {
-					steps {
-						junit '**/target/surefire-reports/**/*.xml'  
-		            }
-				}
-				stage('Deploy') {
-	        		steps {
-	        			sh 'mvn deploy:deploy-file -Dfile=target/obera-base-1.3-SNAPSHOT.jar -DpomFile=pom.xml -DrepositoryId=archiva.snapshots -Durl=http://jenkins:8081/repository/snapshots'
-	   				}
-	   			}
-	  
-	   		}	
-	    }
+	    
     }
 }
